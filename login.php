@@ -1,46 +1,53 @@
 <?php
-//memulai session atau melanjutkan session yang sudah ada
+// Memulai session atau melanjutkan session yang sudah ada
 session_start();
 
-//menyertakan code dari file koneksi
+// Menyertakan kode dari file koneksi
 include "koneksi.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $username = $_POST['user'];
   
-  //menggunakan fungsi enkripsi md5 supaya sama dengan password  yang tersimpan di database
+  // Menggunakan MD5 untuk enkripsi password
   $password = md5($_POST['pass']);
 
-	//prepared statement
-  $stmt = $conn->prepare("SELECT username 
-                          FROM user 
-                          WHERE username=? AND password=?");
+  // Prepared statement untuk menghindari SQL injection
+  $stmt = $conn->prepare("SELECT username, password FROM user WHERE username=?");
 
-	//parameter binding 
-  $stmt->bind_param("ss", $username, $password);//username string dan password string
+  // Parameter binding
+  $stmt->bind_param("s", $username); // Menggunakan parameter string (s) untuk username
   
-  //database executes the statement
+  // Eksekusi statement
   $stmt->execute();
   
-  //menampung hasil eksekusi
+  // Menampung hasil eksekusi
   $hasil = $stmt->get_result();
   
-  //mengambil baris dari hasil sebagai array asosiatif
+  // Mengambil baris dari hasil sebagai array asosiatif
   $row = $hasil->fetch_array(MYSQLI_ASSOC);
 
-  //check apakah ada baris hasil data user yang cocok
+  // Cek apakah ada baris hasil data user yang cocok
   if (!empty($row)) {
-    //jika ada, simpan variable username pada session
-    $_SESSION['username'] = $row['username'];
+    // Verifikasi password yang dimasukkan dengan yang ada di database (menggunakan MD5)
+    if ($password == $row['password']) {
+      // Jika password valid, simpan username di session
+      $_SESSION['username'] = $row['username'];
 
-    //mengalihkan ke halaman admin
-    header("location:admin.php");
+      // Mengalihkan ke halaman admin
+      header("location:admin.php");
+      exit();
+    } else {
+      // Jika password salah
+      header("location:login.php?error=invalid_credentials");
+      exit();
+    }
   } else {
-	  //jika tidak ada (gagal), alihkan kembali ke halaman login
-    header("location:login.php");
+    // Jika username tidak ditemukan
+    header("location:login.php?error=user_not_found");
+    exit();
   }
 
-	//menutup koneksi database
+  // Menutup koneksi database
   $stmt->close();
   $conn->close();
 } else {
@@ -126,24 +133,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
           <div class="mt-4 text-center">
             <?php
-            // Set username dan password dummy
-            $username = "admin";
-            $password = "123456";
-
-            // Check apakah ada request POST
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-              // Validasi username dan password
-              if ($_POST["user"] == $username && $_POST["pass"] == $password) {
-                echo '<div class="alert alert-success mt-3">Username dan Password Benar</div>';
-                echo '<script>
-                        document.getElementById("login-card").classList.add("border-success");
-                      </script>';
-              } else {
-                echo '<div class="alert alert-danger mt-3">Username dan Password Salah</div>';
-                echo '<script>
-                        document.getElementById("login-card").classList.add("border-warning");
-                      </script>';
-              }
+            if (isset($_GET['error'])) {
+                $error = $_GET['error'];
+                if ($error == 'invalid_credentials') {
+                    echo '<div class="alert alert-danger mt-3">Username atau Password Salah</div>';
+                } elseif ($error == 'user_not_found') {
+                    echo '<div class="alert alert-danger mt-3">Username Tidak Ditemukan</div>';
+                }
             }
             ?>
           </div>

@@ -28,18 +28,18 @@ if (!isset($_SESSION['username'])) {
     /> 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>  
-        html {
-            position: relative;
-            min-height: 100%;
+        html, body {
+            height: 100%;
         }
         body {
-            margin-bottom: 100px; /* Margin bottom by footer height */
+            display: flex;
+            flex-direction: column;
+            margin: 0;
         }
         footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 100px; /* Set the fixed height of the footer here */ 
+            margin-top: auto; /* Push footer to bottom */
+            background-color: #f8f9fa; /* Footer background */
+            padding: 20px 0;
         }
     </style>
 </head>
@@ -67,11 +67,18 @@ if (!isset($_SESSION['username'])) {
             <li class="nav-item">
                 <a class="nav-link" href="admin.php?page=article">Article</a>
             </li> 
+            <li class="nav-item">
+                <a class="nav-link" href="admin.php?page=gallery">Gallery</a>
+            </li> 
+            <li class="nav-item">
+                <b><a class="nav-link" href="index.php?page=home">Homepage</a></b>
+            </li> 
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-danger fw-bold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <?= $_SESSION['username']?>
                 </a>
                 <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="admin.php?page=profile">Profile admin</a></li>
                     <li><a class="dropdown-item" href="logout.php">Logout</a></li> 
                 </ul>
             </li> 
@@ -97,6 +104,8 @@ if (!isset($_SESSION['username'])) {
         }
         ?>
     </div>
+    
+
 </section>
 <!-- content end -->
     <!-- footer begin -->

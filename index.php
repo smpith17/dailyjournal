@@ -101,7 +101,7 @@ include "koneksi.php";
     <!-- article begin -->
 <section id="article" class="text-center p-5">
   <div class="container">
-    <h1 class="fw-bold display-4 pb-3">article</h1>
+    <h1 class="fw-bold display-4 pb-3">Article</h1>
     <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
       <?php
       $sql = "SELECT * FROM article ORDER BY tanggal DESC";
@@ -132,40 +132,36 @@ include "koneksi.php";
   </div>
 </section>
 <!-- article end -->
-    <!-- gallery begin -->
-    <section id="gallery" class="text-center p-5 bg-danger-subtle">
+     <!-- gallery begin -->
+     <section id="gallery" class="text-center p-5 bg-danger-subtle">
       <div class="container">
-        <h1 class="fw-bold display-4 pb-3">gallery</h1>
+        <h1 class="fw-bold display-4 pb-3">Gallery</h1>
         <div id="carouselExample" class="carousel slide">
           <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="https://i.scdn.co/image/63cad86cb183568085a4e5f0be86aa187cc511e4" class="d-block w-100" alt="..." />
-            </div>
-            <div class="carousel-item">
-              <img src="https://i.scdn.co/image/63cad86cb183568085a4e5f0be86aa187cc511e4" class="d-block w-100" alt="..." />
-            </div>
-            <div class="carousel-item">
-              <img src="https://i.scdn.co/image/63cad86cb183568085a4e5f0be86aa187cc511e4" class="d-block w-100" alt="..." />
-            </div>
-            <div class="carousel-item">
-              <img src="https://i.scdn.co/image/63cad86cb183568085a4e5f0be86aa187cc511e4" class="d-block w-100" alt="..." />
-            </div>
+            <?php
+            // Query to get images from the gallery table
+            $sql = "SELECT * FROM gallery ORDER BY tanggal DESC"; // Modify this based on your table structure
+            $result = $conn->query($sql);
+
+            // Fetch and display images in the carousel
+            $active = true; // Flag to make the first item active
+            while ($row = $result->fetch_assoc()) {
+                $imageSrc = "img/" . $row["gambar"]; // Assuming your images are stored in the img directory
+            ?>
+                <div class="carousel-item <?php echo $active ? 'active' : ''; ?>">
+                  <img src="<?= $imageSrc ?>" class="d-block w-100" alt="Gallery Image" />
+                </div>
+            <?php
+                // Only set the first item as active, subsequent items will be default
+                $active = false;
+            }
+            ?>
           </div>
-          <button
-            class="carousel-control-prev"
-            type="button"
-            data-bs-target="#carouselExample"
-            data-bs-slide="prev"
-          >
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
           </button>
-          <button
-            class="carousel-control-next"
-            type="button"
-            data-bs-target="#carouselExample"
-            data-bs-slide="next"
-          >
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
           </button>
