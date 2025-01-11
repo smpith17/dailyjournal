@@ -32,10 +32,18 @@ $username = $_SESSION['username'];
                 <input type="file" class="form-control" name="photo">
             </div>
 
+            <!-- Foto Profil Saat Ini -->
             <div>
                 <label for="photo" class="form-label">Foto Profile Saat Ini</label><br>
-                <!-- Foto profil diambil dari folder img -->
-                <img src="img/<?php echo $username; ?>.jpg" alt="Profile Photo" width="100">
+                <?php 
+                $profile_photo_path = "img/$username.jpg";
+                if (file_exists($profile_photo_path)) {
+                    // Tambahkan timestamp untuk menghindari cache
+                    echo "<img src=\"$profile_photo_path?t=" . time() . "\" alt=\"Profile Photo\" width=\"100\">";
+                } else {
+                    echo "<img src=\"img/default.jpg\" alt=\"Default Profile Photo\" width=\"100\">"; // Default foto jika tidak ada
+                }
+                ?>
             </div>
 
             </br>
